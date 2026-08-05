@@ -8,26 +8,49 @@ Works offline. Installs to the home screen. Bilingual English / বাংলা.
 
 ---
 
+## If your page looks like plain text on a white background
+
+Every heading stacked in Times New Roman, no colour, all screens at once —
+that means **the CSS and JS files did not upload**. The HTML arrived, nothing else did.
+It is the commonest GitHub Pages problem and it is not a code fault.
+
+**Check it in ten seconds.** Open your repo on github.com. You should see all
+these files sitting at the top level, not inside folders:
+
+```
+index.html   style.css   config.js   data.js
+schedule.js  store.js    app.js      sw.js
+manifest.json  icon-192.png  icon-512.png
+```
+
+If `style.css` and `app.js` are missing, that is your answer. Upload them.
+
+**Why it happens.** Dragging a folder into GitHub's web uploader often drops or
+flattens nested folders like `css/` and `js/`. This version has **no subfolders
+at all**, so there is nothing left to lose.
+
+**Still broken?** Open `standalone.html` instead — see the bottom of this page.
+
+---
+
 ## What's in here
 
-```
-clean-my-area/
-├── index.html              the app shell
-├── config.js               ← the only file you edit
-├── css/style.css           the signage design system
-├── js/
-│   ├── data.js             29 zones, rotation, gates, criteria, translations
-│   ├── schedule.js         date logic — the roster is computed, not stored
-│   ├── store.js            device storage + push to Google Sheets
-│   └── app.js              rendering and events
-├── sw.js                   service worker — makes it work with no signal
-├── manifest.json           home-screen install
-├── apps-script/Code.gs     Google Sheets backend
-├── python/cma_tools.py     roster seeder + monthly Excel report
-└── .github/workflows/      auto-deploy on every push
-```
+| File | What it is |
+|---|---|
+| `index.html` | The app shell |
+| `style.css` | The signage design system |
+| `config.js` | **← the only file you edit** |
+| `data.js` | 29 zones, rotation, gates, criteria, translations |
+| `schedule.js` | Date logic — the roster is computed, not stored |
+| `store.js` | Device storage + push to Google Sheets |
+| `app.js` | Rendering and events |
+| `sw.js` | Service worker — makes it work with no signal |
+| `manifest.json` | Home-screen install |
+| `standalone.html` | Everything in one file — the fallback |
+| `Code.gs` | Google Sheets backend (paste into Apps Script) |
+| `cma_tools.py` | Roster seeder + monthly Excel report |
 
-Nothing to build. No npm, no bundler, no framework. Push the files and they are the site.
+Nothing to build. No npm, no bundler, no framework.
 
 ---
 
@@ -35,127 +58,90 @@ Nothing to build. No npm, no bundler, no framework. Push the files and they are 
 
 ### 1. Create the repository
 
-Go to <https://github.com/new>.
+<https://github.com/new> → name it, set **Public**, do not add a README.
 
-- Repository name: `clean-my-area`
-- **Public** (Pages is free only on public repos for personal accounts)
-- Do **not** tick "Add a README" — you already have one
+### 2. Upload
 
-Create repository.
+Click **uploading an existing file**. Now — this is the part that went wrong before:
 
-### 2. Upload the files
+> **Select all the files, not the folder.**
+> Open the folder, press Ctrl+A (or Cmd+A), and drag *the files themselves* into
+> the browser. Dragging the folder is what loses things.
 
-On the empty repo page, click **uploading an existing file**.
+Confirm the file list on screen shows `style.css` and `app.js` before you commit.
 
-Drag the whole `clean-my-area` folder in. GitHub keeps the folder structure.
-Commit message: `Initial app`. Click **Commit changes**.
-
-> If drag-and-drop misses the hidden `.nojekyll` and `.github` folder, use the
-> command line instead — see [Part 4](#part-4--command-line-if-you-prefer).
-> `.nojekyll` matters: without it GitHub ignores files starting with `_`.
+Commit message: `Initial app` → **Commit changes**.
 
 ### 3. Turn on Pages
 
-**Settings → Pages**
+**Settings → Pages → Source: GitHub Actions**
 
-- Source: **GitHub Actions**
-
-That's it. The workflow in `.github/workflows/pages.yml` runs automatically.
-Watch it under the **Actions** tab — about a minute.
-
-Your app is now live at:
+Watch the **Actions** tab. About a minute. Then open your URL:
 
 ```
-https://abdulla-a-b.github.io/clean-my-area/
+https://abdulla-a-b.github.io/<your-repo-name>/
 ```
 
-### 4. Install it on a phone
+You should see a black header, a yellow-and-black hazard stripe, and six tabs
+along the bottom. If you see plain text, go back to the top of this page.
 
-Open that URL on the phone.
+### 4. Install on a phone
 
 - **Android / Chrome** — menu → *Add to Home screen*
 - **iPhone / Safari** — share → *Add to Home Screen*
 
-It opens full screen with no browser bar and works with no signal.
+Opens full screen, no browser bar, works with no signal.
 
 ---
 
 ## Part 2 — Connect the Google Sheet
 
-Skip this to start. The app works immediately with records on the device.
-Do it before you rely on the data for anything that matters.
+Optional. The app works immediately with records saved on the device. Do this
+before you rely on the data for an audit.
 
-### 1. Create the sheet
-
-New Google Sheet → name it **Clean My Area — Records**.
-
-### 2. Add the backend
-
-**Extensions → Apps Script.** Delete the placeholder code, paste all of
-`apps-script/Code.gs`, save.
-
-Run the `setup` function once from the toolbar. Authorise when Google asks.
-Four tabs appear: `roster`, `inspection`, `vector`, `layer1`.
-
-### 3. Publish it
-
-**Deploy → New deployment → Web app**
-
-| Setting | Value |
-|---|---|
-| Execute as | **Me** |
-| Who has access | **Anyone** |
-
-Copy the `/exec` URL.
-
-### 4. Point the app at it
-
-In GitHub, open `config.js` → pencil icon → paste your URL:
+1. New Google Sheet → **Clean My Area — Records**
+2. **Extensions → Apps Script**, paste all of `Code.gs`, save
+3. Run `setup` once from the toolbar, authorise. Four tabs appear.
+4. **Deploy → New deployment → Web app** — Execute as **Me**, access **Anyone**
+5. Copy the `/exec` URL into `config.js` on GitHub:
 
 ```js
 const API_URL = "https://script.google.com/macros/s/AKfy.../exec";
 ```
 
-Commit. The workflow redeploys in about a minute. Every save now lands in the Sheet.
+**After any change, bump the cache version in `sw.js`** — `cma-v2` to `cma-v3`.
+Otherwise phones keep serving the old version from cache and you will think the
+deploy failed.
 
-> **After any change**, bump the cache version in `sw.js` — change `cma-v1` to
-> `cma-v2`. Otherwise phones keep serving the old version from cache.
+### Monthly email
 
-### 5. Monthly email
-
-In Apps Script, edit the `to:` line in `emailMonthly` to add the Factory Manager
-and HSE Officer. Then: clock icon (**Triggers**) → **Add Trigger** →
-function `emailMonthly`, time-driven, **month timer**, 1st, 8–9am.
-
-The monthly summary now sends itself. No laptop, no Python.
+In Apps Script, add the Factory Manager and HSE Officer to the `to:` line in
+`emailMonthly`. Then clock icon (**Triggers**) → **Add Trigger** → function
+`emailMonthly`, time-driven, **month timer**, 1st, 8–9am. It sends itself.
 
 ---
 
 ## Part 3 — Python (optional)
 
-Two jobs the browser shouldn't do.
-
-**Seed the sheet** — generates the 148-day roster, 6 Aug to 31 Dec 2026, with the
-November season switch already applied:
-
 ```bash
-python3 python/cma_tools.py seed --out ./seed
+python3 cma_tools.py seed --out ./seed
 ```
 
-Then in the Sheet: **File → Import → Upload → Append to current sheet**.
-
-**Formatted monthly report** — only if you need a file to attach to a board pack
-or an audit response. The Apps Script email covers the routine case.
+Generates the 148-day roster, 6 Aug to 31 Dec 2026, with the November season
+switch applied. Import into the Sheet: **File → Import → Upload → Append**.
 
 ```bash
-python3 python/cma_tools.py report --csv clean-my-area-2026-08-31.csv --month 2026-08
+python3 cma_tools.py report --csv clean-my-area-2026-08-31.csv --month 2026-08
 ```
 
-Needs `openpyxl`: `pip install openpyxl`
+Formatted monthly Excel — only if you need a file for a board pack or audit
+response. The Apps Script email covers the routine case. Needs `pip install openpyxl`.
 
 ---
 
 ## Part 4 — Command line, if you prefer
+
+This never loses folders:
 
 ```bash
 cd clean-my-area
@@ -163,30 +149,37 @@ git init
 git add .
 git commit -m "Initial app"
 git branch -M main
-git remote add origin https://github.com/abdulla-a-b/clean-my-area.git
+git remote add origin https://github.com/abdulla-a-b/<your-repo-name>.git
 git push -u origin main
 ```
 
-Then **Settings → Pages → Source: GitHub Actions**.
+Then **Settings → Pages → Source: GitHub Actions**. Every later push redeploys.
 
-To update later:
+---
 
-```bash
-git add .
-git commit -m "Real area owners"
-git push
-```
+## The fallback: `standalone.html`
 
-Every push redeploys automatically.
+One file. The CSS and all the JavaScript are welded inside it. There is nothing
+external to fail to load.
+
+- Upload just this one file to any repo and open it
+- Or email it, or put it on a USB stick, or open it straight from your laptop
+
+It loses only two things: the offline service worker and the home-screen install
+(both need real files side by side). Everything else — all six screens, both
+languages, the full rotation logic — works identically.
+
+If you are ever unsure whether a problem is the app or the hosting, open
+`standalone.html`. If that works, the app is fine and the problem is upload paths.
 
 ---
 
 ## Before you roll it out
 
-- [ ] Replace the placeholder area owners in `js/data.js` (the `Z` array) and
-      `python/cma_tools.py` (`ZONES`). Same 29 rows in both files.
-- [ ] Confirm Saturday is the declared weekly holiday. If it's Friday, change
-      the `day===6` check in `js/schedule.js`.
+- [ ] Replace the placeholder area owners in `data.js` (the `Z` array) and
+      `cma_tools.py` (`ZONES`). Same 29 rows in both.
+- [ ] Confirm Saturday is the declared weekly holiday. If it is Friday, change
+      the `day===6` check in `schedule.js`.
 - [ ] Add the factory public-holiday calendar to the Sheet's roster tab.
 - [ ] Set `to:` in `emailMonthly` before enabling the trigger.
 
@@ -196,16 +189,15 @@ Every push redeploys automatically.
 
 **The colour strip is the bucket.** Red sanitary, green food, blue medical and
 general, yellow production — the same code as the Chemical & PPE register. A
-cleaner who cannot read the zone name can still see which set to take. Colour
-carries meaning here; it is not decoration.
+cleaner who cannot read the zone name can still see which set to take.
 
 **Built for a phone in bright light.** Light background, heavy black keylines,
 48px minimum tap targets for gloved hands, bottom navigation within thumb reach.
 Not dark mode — a dark screen is unreadable next to a factory window.
 
-**The roster is computed, not stored.** `js/schedule.js` derives every day from
-the 6-week cycle, the monsoon/dry switch and the third-Thursday training rule.
-It keeps producing correct assignments into 2027 and beyond with no new data.
+**The roster is computed, not stored.** `schedule.js` derives every day from the
+6-week cycle, the monsoon/dry switch and the third-Thursday training rule. It
+keeps producing correct assignments into 2027 and beyond with no new data.
 
 **Two rules live in the interface, not the manual.** It will not save if team
 lead and verifier are the same name. It will not save an inspection with any
@@ -213,6 +205,4 @@ criterion left unscored.
 
 ---
 
-## Licence
-
-Internal use, Good & Fast Packaging Co. Ltd. and MBBC & Company.
+Internal use — Good & Fast Packaging Co. Ltd. and MBBC & Company.

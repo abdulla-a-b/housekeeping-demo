@@ -2,16 +2,16 @@
    Caches the app shell so it opens with no signal.
    Bump CACHE when you change any file, or phones keep the old version. */
 
-const CACHE = 'cma-v1';
+const CACHE = 'cma-v2';
 const SHELL = [
   './',
   './index.html',
-  './css/style.css',
+  './style.css',
   './config.js',
-  './js/data.js',
-  './js/schedule.js',
-  './js/store.js',
-  './js/app.js',
+  './data.js',
+  './schedule.js',
+  './store.js',
+  './app.js',
   './manifest.json',
   './icon-192.png',
   './icon-512.png'
