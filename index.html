@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#101211">
+<meta name="description" content="Housekeeping and hygiene programme for Good &amp; Fast Packaging Co. Ltd. — daily roster, zone inspection, vector control and KPI.">
+<title>আমার এলাকা · Clean My Area</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&amp;family=Barlow:wght@400;500;600;700&amp;family=Noto+Sans+Bengali:wght@400;600;700&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+
+<div class="tape" aria-hidden="true"></div>
+<header>
+  <div class="brand">
+    <span class="wordmark">আমার এলাকা</span>
+    <span class="latin">Clean My Area</span>
+  </div>
+  <div class="hdr-row">
+    <div class="hdr-meta" id="hdrMeta">Good &amp; Fast Packaging</div>
+    <button class="langbtn" id="langBtn" type="button">বাংলা</button>
+  </div>
+</header>
+
+<main>
+
+<!-- ============ TODAY ============ -->
+<section class="view on" id="v-today">
+  <div class="hero" id="hero">
+    <div class="date" id="heroDate">—</div>
+    <div class="dow" id="heroDow">—</div>
+    <div class="hero-tags" id="heroTags"></div>
+  </div>
+
+  <div class="card" id="pmCard">
+    <div class="card-h"><h2 data-t="pmTitle">Deep clean · 14:45</h2><span class="badge slate" id="pmZid">—</span></div>
+    <div class="card-b zc" id="pmBody" style="border-left-width:10px">
+      <div id="pmZone" style="font-family:'Barlow Condensed';font-size:21px;font-weight:700;line-height:1.15"></div>
+      <p class="note" id="pmNote"></p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-h"><h2 data-t="stdTitle">Standard work · every day</h2></div>
+    <div class="card-b" style="padding:0 14px" id="blocks"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-h"><h2 data-t="signTitle">Sign off today</h2></div>
+    <div class="card-b">
+      <div class="row2">
+        <div><label class="f" data-t="lead">Team lead</label><input type="text" id="fLead" autocomplete="off"></div>
+        <div><label class="f" data-t="ver">Verifier</label><input type="text" id="fVer" autocomplete="off"></div>
+      </div>
+      <label class="f" data-t="doneQ">Work completed?</label>
+      <div class="yn">
+        <button type="button" id="ynY" aria-pressed="false">YES</button>
+        <button type="button" class="no" id="ynN" aria-pressed="false">NO</button>
+      </div>
+      <label class="f" data-t="scoreL">Inspection score (0–50)</label>
+      <input type="text" id="fScore" inputmode="numeric" placeholder="—">
+      <p class="note" id="vwarn"></p>
+      <button class="btn" id="saveDay" style="margin-top:14px" data-t="saveDay">Save today</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ INSPECT ============ -->
+<section class="view" id="v-inspect">
+  <div class="card">
+    <div class="card-h"><h2 data-t="inspTitle">Zone inspection · 50 points</h2></div>
+    <div class="card-b">
+      <div class="row2">
+        <div><label class="f" data-t="zoneL">Zone</label><select id="iZone"></select></div>
+        <div><label class="f" data-t="dateL">Date</label><input type="date" id="iDate"></div>
+      </div>
+      <label class="f" data-t="verL">Verifier (not the cleaner)</label>
+      <input type="text" id="iVer" autocomplete="off">
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-h"><h2 data-t="critTitle">Ten criteria</h2><span id="iProg" class="badge slate">0/10</span></div>
+    <div class="card-b" id="qList"></div>
+  </div>
+
+  <div class="total">
+    <div class="total-n"><span id="iTot">0</span><small>/50</small></div>
+    <div class="total-v"><strong id="iRate">—</strong><span id="iAdvice" data-t="rateHint">Score every criterion to get a rating.</span></div>
+  </div>
+  <label class="f" data-t="obsL">Observations · photo reference</label>
+  <textarea id="iObs" placeholder="Photo required for anything scored 0–2"></textarea>
+  <button class="btn" id="saveInsp" style="margin-top:12px" data-t="saveInsp">Save inspection</button>
+  <button class="btn ghost" id="clearInsp" style="margin-top:8px" data-t="clearInsp">Clear form</button>
+</section>
+
+<!-- ============ ZONES ============ -->
+<section class="view" id="v-zones">
+  <div class="card">
+    <div class="card-h"><h2 data-t="zonesTitle">29 zones</h2><span class="badge red" id="zCrit">—</span></div>
+    <div class="card-b" style="padding:0" id="zoneList"></div>
+  </div>
+  <p class="note" data-t="zonesNote">The colour strip is the equipment colour. Red sanitary · Green food · Blue medical and general · Yellow production. Take the bucket that matches the strip.</p>
+</section>
+
+<!-- ============ VECTOR ============ -->
+<section class="view" id="v-vector">
+  <div class="card">
+    <div class="card-h"><h2 data-t="vecTitle">Standing water · 3-day rule</h2><span class="badge yellow" id="vSeason">—</span></div>
+    <div class="card-b">
+      <p class="note" data-t="vecIntro">Water standing three days can breed adult mosquitoes. Finding water is not the failure. Leaving it is.</p>
+      <label class="f" data-t="vLoc">Where</label>
+      <input type="text" id="vLoc" placeholder="Roof PB, drain by ETP, waste yard…">
+      <label class="f" data-t="vType">Container or surface</label>
+      <input type="text" id="vType" placeholder="Drum, tyre, plant tray, roof pond…">
+      <label class="f" data-t="vAct">Action taken</label>
+      <input type="text" id="vAct" placeholder="Drained, inverted, outlet cleared…">
+      <label class="f" data-t="vClosed">Closed within 24 hours?</label>
+      <div class="yn"><button type="button" id="vY" aria-pressed="false">YES</button><button type="button" class="no" id="vN" aria-pressed="false">NO</button></div>
+      <button class="btn" id="saveVec" style="margin-top:14px" data-t="saveVec">Log this site</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-h"><h2 data-t="vLogTitle">Site log</h2><span class="badge slate" id="vRate">—</span></div>
+    <div class="card-b" style="padding:0" id="vecList"></div>
+  </div>
+</section>
+
+<!-- ============ KPI ============ -->
+<section class="view" id="v-kpi">
+  <div class="card">
+    <div class="card-h"><h2 data-t="kpiTitle">This month</h2><span class="badge slate" id="kMonth">—</span></div>
+    <div class="card-b" style="padding:0">
+      <div class="kpi">
+        <div><div class="n" id="kAdh">—</div><div class="l" data-t="kAdhL">Adherence</div></div>
+        <div><div class="n" id="kScore">—</div><div class="l" data-t="kScoreL">Avg score</div></div>
+        <div><div class="n" id="kMiss">—</div><div class="l" data-t="kMissL">Critical misses</div></div>
+        <div><div class="n" id="kVec">—</div><div class="l" data-t="kVecL">Vector closure</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-h"><h2 data-t="tgtTitle">Against target</h2></div>
+    <div class="card-b">
+      <div class="eyebrow" data-t="t1">Adherence — target 95%</div>
+      <div class="bar"><i id="bAdh" style="width:0"></i><span id="bAdhT"></span></div>
+      <div class="eyebrow" style="margin-top:14px" data-t="t2">Inspection score — target 40/50</div>
+      <div class="bar"><i id="bScore" style="width:0"></i><span id="bScoreT"></span></div>
+      <div class="eyebrow" style="margin-top:14px" data-t="t3">Layer 1 lines — target 90%</div>
+      <div class="bar"><i id="bL1" style="width:0"></i><span id="bL1T"></span></div>
+      <label class="f" data-t="l1L">Lines completing the 5-minute routine (%)</label>
+      <input type="text" id="fL1" inputmode="numeric" placeholder="0–100">
+      <button class="btn ghost" id="saveL1" style="margin-top:10px" data-t="saveL1">Update</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-h"><h2 data-t="expTitle">Records</h2></div>
+    <div class="card-b">
+      <p class="note" id="recCount"></p>
+      <button class="btn ghost" id="exportBtn" style="margin-top:10px" data-t="exportBtn">Export CSV</button>
+      <button class="btn ghost" id="syncBtn" style="margin-top:8px" data-t="syncBtn">Sync to Google Sheet</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PLAN ============ -->
+<section class="view" id="v-plan">
+  <div class="card">
+    <div class="card-h"><h2 data-t="planTitle">Six phases · six gates</h2></div>
+    <div class="card-b" style="padding:0" id="gateList"></div>
+  </div>
+  <div class="card">
+    <div class="card-h"><h2 data-t="rotTitle">Rotation · this cycle week</h2><span class="badge slate" id="cycTag">—</span></div>
+    <div class="card-b" style="padding:0" id="rotList"></div>
+  </div>
+</section>
+
+</main>
+
+<nav id="nav">
+  <button data-v="today" aria-current="page"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><span data-t="nTod">Today</span></button>
+  <button data-v="inspect"><svg viewBox="0 0 24 24"><path d="M4 4h13l3 3v13H4z"/><path d="M8 12l3 3 5-6"/></svg><span data-t="nIns">Inspect</span></button>
+  <button data-v="zones"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8"/><rect x="13" y="3" width="8" height="8"/><rect x="3" y="13" width="8" height="8"/><rect x="13" y="13" width="8" height="8"/></svg><span data-t="nZon">Zones</span></button>
+  <button data-v="vector"><svg viewBox="0 0 24 24"><path d="M12 3s6 7 6 11a6 6 0 0 1-12 0c0-4 6-11 6-11z"/></svg><span data-t="nVec">Water</span></button>
+  <button data-v="kpi"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg><span data-t="nKpi">KPI</span></button>
+  <button data-v="plan"><svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h12M3 18h7"/></svg><span data-t="nPln">Plan</span></button>
+</nav>
+
+<footer>
+  <div class="gl"><i class="g1">g</i><i class="u1">u</i><i class="u2">u</i><i class="l1">l</i><i class="b1">b</i><i class="a1">a</i></div>
+  <p>technology for better performance</p>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script src="config.js"></script>
+<script src="js/data.js"></script>
+<script src="js/schedule.js"></script>
+<script src="js/store.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
